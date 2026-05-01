@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بطاقة مقابلة مدير المدرسة - تفاعلية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            padding: 20px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* رأس الصفحة */
+        .header {
+            background: linear-gradient(135deg, #1e4620, #2e7d32);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        /* شريط الأدوات */
+        .toolbar {
+            background: white;
+            border-radius: 16px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 40px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.2);
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #1e293b;
+        }
+
+        .filter-btn.active {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .filter-btn:hover {
+            background: #cbd5e1;
+        }
+
+        .print-btn {
+            background: #1e4620;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .print-btn:hover {
+            background: #0f3311;
+            transform: scale(1.02);
+        }
+
+        /* شبكة البطاقات */
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
+            gap: 25px;
+        }
+
+        /* البطاقة */
+        .card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 24px -8px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background: #1e4620;
+            color: white;
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.4;
+            flex: 1;
+            padding-left: 15px;
+        }
+
+        .toggle-icon {
+            font-size: 1.4rem;
+            background: rgba(255,255,255,0.2);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-body {
+            padding: 20px;
+            display: none;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .card-body.open {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            border-right: 3px solid #2e7d32;
+            padding-right: 12px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: #1e4620;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .evidence-list, .impact-text {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+
+        .evidence-list li {
+            margin-bottom: 6px;
+            margin-right: 20px;
+        }
+
+        .empty-field {
+            background: #f8fafc;
+            border: 1px dashed #94a3b8;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .empty-field label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #475569;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        textarea {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            resize: vertical;
+            background: #ffffff;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #2e7d32;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #1e4620;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 30px;
+            margin-bottom: 8px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .toolbar, .filter-buttons, .search-box, .print-btn, .toggle-icon, .card-header {
+                cursor: default;
+            }
+            .card-body {
+                display: block !important;
+            }
+            .filter-btn, .search-box input, .print-btn {
+                display: none;
+            }
+            .toolbar {
+                display: none;
+            }
+            .card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+            }
+            textarea {
+                border: 1px solid #aaa;
+                background: #fefefe;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📋 بطاقة مقابلة مدير المدرسة</h1>
+        <p>المؤشرات · الشواهد · الأثر · قياس الأثر + تسجيل إجابات المقابلة</p>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 بحث في المؤشرات...">
+        </div>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">الكل</button>
+            <button class="filter-btn" data-filter="التخطيط">التخطيط</button>
+            <button class="filter-btn" data-filter="قيادة العملية التعليمية">القيادة التعليمية</button>
+            <button class="filter-btn" data-filter="المجتمع المدرسي">المجتمع المدرسي</button>
+            <button class="filter-btn" data-filter="التطوير المؤسسي">التطوير المؤسسي</button>
+            <button class="filter-btn" data-filter="بناء خبرات التعلم">التعلم الإلكتروني</button>
+        </div>
+        <button class="print-btn" onclick="window.print();">🖨️ طباعة الصفحة</button>
+    </div>
+
+    <div class="indicators-grid" id="indicatorsGrid"></div>
+</div>
+
+<script>
+    // جميع المؤشرات المستخرجة من ملف المقابلة (9 مؤشرات)
+    const indicatorsData = [
+        {
+            id: 1,
+            code: "1-1-1-1",
+            title: "تضع المدرسة خطة تشغيلية مكتملة العناصر، وفق أهداف تطويرية محددة.",
+            category: "التخطيط",
+            evidence: [
+                "✅ خطة تشغيلية مكتملة العناصر (رؤية، رسالة، أهداف تطويرية، مبادرات، مؤشرات أداء، ميزانية زمنية).",
+                "✅ الخطة تتضمن مبادرات نوعية مرتبطة بأهداف تطويرية طموحة.",
+                "✅ وجود خطط للاستدامة والتحسين ضمن الخطة.",
+                "✅ مشاركة 90% أو أكثر من منسوبي المدرسة في إعداد الخطة."
+            ],
+            impact: "وضوح الاتجاه الاستراتيجي لدى جميع العاملين في المدرسة، وتحقيق التكامل بين الجهود نحو أهداف تطويرية محددة.",
+            measurement: "نسبة تحقيق الأهداف التطويرية المحددة في الخطة بنهاية العام الدراسي. نسبة إنجاز المبادرات النوعية وفق الجدول الزمني."
+        },
+        {
+            id: 2,
+            code: "1-1-1-2",
+            title: "تتابع المدرسة تنفيذ خطتها وتطورها بما يضمن تحقيق أهدافها.",
+            category: "التخطيط",
+            evidence: [
+                "✅ إجراءات محددة لمتابعة الخطة (تقارير دورية، اجتماعات متابعة، لوحات مؤشرات أداء).",
+                "✅ جداول زمنية واضحة لتنفيذ الأنشطة والبرامج مع سجلات متابعة.",
+                "✅ أساليب متنوعة لتقويم الخطة (زيارات صفية، تحليل بيانات، استبيانات).",
+                "✅ تطوير الخطة التشغيلية بناءً على نتائج التقويم."
+            ],
+            impact: "تحسين مستمر في أداء المدرسة، وتصحيح الانحرافات التنفيذية بشكل فوري، مما يؤدي إلى تحقيق الأهداف بكفاءة وفعالية.",
+            measurement: "نسبة التقدم في تنفيذ الخطة التشغيلية مقارنة بالخطة الزمنية. عدد التعديلات أو التطويرات التي أدخلت على الخطة بناءً على التقارير الدورية."
+        },
+        {
+            id: 3,
+            code: "1-2-1-2",
+            title: "تلتزم المدرسة بقيم مهنة التعليم وأخلاقياتها.",
+            category: "قيادة العملية التعليمية",
+            evidence: [
+                "✅ إجراءات واضحة لمتابعة التزام المنسوبين بقواعد السلوك الوظيفي.",
+                "✅ علاقات إيجابية سائدة قائمة على الاحترام المتبادل والثقة.",
+                "✅ 90% أو أكثر من المنسوبين يظهرون توازناً بين العلاقات الإنسانية والواجبات الوظيفية.",
+                "✅ برامج توعوية بقيم وأخلاقيات المهنة."
+            ],
+            impact: "بيئة مدرسية آمنة، محفزة، قائمة على الاحترام والانضباط الذاتي، تنعكس إيجاباً على سلوك المتعلمين وأدائهم.",
+            measurement: "انخفاض عدد شكاوى قلة الاحترام أو المخالفات السلوكية. نتائج استبيان المناخ المدرسي. نسبة التزام المعلمين بالدوام."
+        },
+        {
+            id: 4,
+            code: "1-3-1-3",
+            title: "تعزز المدرسة الشراكة المجتمعية لدعم التعلم والتأثير الإيجابي في المجتمع المحلي.",
+            category: "المجتمع المدرسي",
+            evidence: [
+                "✅ شراكات فاعلة مع مؤسسات وطنية (اتفاقيات، خطط تعاون، أنشطة مشتركة).",
+                "✅ استثمار الشراكة المجتمعية لدعم تعلم المتعلمين واحتياجات ذوي الإعاقة والموهوبين.",
+                "✅ فعاليات وأنشطة توعوية مبتكرة للمجتمع المحلي.",
+                "✅ إتاحة إمكانات المدرسة (مسرح، ملاعب، قاعات) لخدمة المجتمع."
+            ],
+            impact: "تحسن نواتج التعلم ودعم فئات المتعلمين المختلفة من خلال الموارد المجتمعية، وتعزيز دور المدرسة كمركز مؤثر في تنمية المجتمع.",
+            measurement: "عدد الشراكات النشطة والفعالة. قياس أثر الأنشطة المجتمعية عبر استبيانات رضا أفراد المجتمع. تطور أداء المتعلمين المستهدفين."
+        },
+        {
+            id: 5,
+            code: "1-4-1-1",
+            title: "توفر المدرسة كادراً تعليمياً مكتملاً ومؤهلاً.",
+            category: "التطوير المؤسسي",
+            evidence: [
+                "✅ معايير واضحة لاختيار الكوادر التعليمية ومعرفة الوظائف الشاغرة والمهارات المطلوبة.",
+                "✅ نشر إعلانات الوظائف على منصات مناسبة.",
+                "✅ طرق تقييم متنوعة للمتقدمين (مقابلات، اختبارات تدريس).",
+                "✅ اكتمال الكادر التعليمي بنسبة 90% وأعلى وتوافق تخصصاتهم مع مؤهلاتهم بنسبة 90%.",
+                "✅ برامج تدريب ودعم للمعلمين الجدد."
+            ],
+            impact: "استقرار تعليمي، وتقليل الفجوات بين التخصص والمؤهل، مما ينعكس إيجاباً على جودة التدريس ونواتج التعلم.",
+            measurement: "نسبة الشواغر الوظيفية المملوءة بكادر مؤهل. تقييم أداء المعلمين الجدد بعد فترة التدريب."
+        },
+        {
+            id: 6,
+            code: "1-4-1-2",
+            title: "توفر المدرسة كادراً إدارياً مكتملاً ومؤهلاً.",
+            category: "التطوير المؤسسي",
+            evidence: [
+                "✅ اكتمال الكادر الإداري بنسبة 90% وأعلى.",
+                "✅ 90% من الكادر الإداري يحمل مؤهلاً مناسباً (ثانوية فأعلى مع استثناءات للتخصصات).",
+                "✅ توافق مؤهل وخبرة الكادر الإداري مع المهام المكلف بها.",
+                "✅ إجراءات واضحة في الاستقطاب (معايير، إعلان، مقابلات)."
+            ],
+            impact: "سير العمل الإداري بسلاسة وكفاءة، وتوفير بيئة داعمة ومساندة للعملية التعليمية.",
+            measurement: "نسبة اكتمال الهيكل الإداري الفعلي مقابل المعتمد. إنجاز المهام الإدارية في الوقت المحدد. درجة رضا المعلمين عن الدعم الإداري."
+        },
+        {
+            id: 7,
+            code: "1-4-1-3",
+            title: "تظهر المدرسة ثباتاً واستدامة مالية.",
+            category: "التطوير المؤسسي",
+            evidence: [
+                "✅ موارد مالية كافية لدعم وتحسين الجودة التعليمية المستمرة.",
+                "✅ القدرة على تغطية الالتزامات المالية.",
+                "✅ توزيع الميزانية بناءً على الأولويات والاحتياجات.",
+                "✅ نشر سياسة الرسوم والتحصيل لأولياء الأمور.",
+                "✅ إجراءات واضحة لتحقيق الاستدامة المالية."
+            ],
+            impact: "استمرارية البرامج التعليمية والتحسينية دون توقف، وبناء ثقة أولياء الأمور في شفافية الإدارة المالية.",
+            measurement: "نسبة تغطية المصروفات مقابل الإيرادات السنوية. وجود فائض مالي معاد استثماره في التطوير. نسبة التزام أولياء الأمور بسداد الرسوم."
+        },
+        {
+            id: 8,
+            code: "1-4-1-7",
+            title: "تنفذ المدرسة خطة للتحسين بناءً على نتائج التقويم المدرسي، وتتابعها.",
+            category: "التطوير المؤسسي",
+            evidence: [
+                "✅ خطة تحسين تركز على أولويات منبثقة من التقويم الذاتي للمدرسة.",
+                "✅ تنفيذ برامج وأنشطة خطة التحسين.",
+                "✅ متابعة منتظمة لتنفيذ خطة التحسين (تقارير، اجتماعات).",
+                "✅ تطوير الخطة وإجراءاتها بشكل دوري."
+            ],
+            impact: "معالجة منهجية لنقاط الضعف، وتعزيز نقاط القوة، بما يحقق قفزات نوعية في نواتج التعلم.",
+            measurement: "نسبة إنجاز خطة التحسين بحلول الفترة المحددة. تحسن مؤشرات التقويم الذاتي في العام التالي. التقدم المحرز في نواتج التعلم."
+        },
+        {
+            id: 9,
+            code: "2-1-1-4",
+            title: "تفعل المدرسة التعلم الإلكتروني لتلبية احتياجات المتعلمين، ودعم تعلمهم.",
+            category: "بناء خبرات التعلم",
+            evidence: [
+                "✅ إجراءات محددة لدمج التعلم الإلكتروني في التعليم اليومي.",
+                "✅ إجراءات للطوارئ (التعليم عن بعد).",
+                "✅ أنشطة متنوعة ومبتكرة تدمج التعلم الصفي والتعلم الإلكتروني.",
+                "✅ تجهيزات تقنية كافية لتلبية احتياجات جميع المتعلمين.",
+                "✅ متابعة وتطوير تنفيذ برامج دمج التعلم الإلكتروني."
+            ],
+            impact: "التعلم المخصص والمرن الذي يتجاوب مع احتياجات وسرعة كل متعلم، ويستمر في أي ظرف طارئ، ويزيد من دافعية المتعلمين.",
+            measurement: "نسبة استخدام المعلمين لمنصات التعلم الإلكتروني في خططهم اليومية. مستوى رضا المتعلمين وأولياء الأمور عن تجربة التعلم الإلكتروني."
+        }
+    ];
+
+    const grid = document.getElementById('indicatorsGrid');
+    let currentFilter = 'all';
+    let searchTerm = '';
+
+    function renderCards() {
+        const filtered = indicatorsData.filter(item => {
+            const matchFilter = currentFilter === 'all' || item.category === currentFilter;
+            const matchSearch = item.title.includes(searchTerm) || item.code.includes(searchTerm) || item.evidence.some(ev => ev.includes(searchTerm));
+            return matchFilter && matchSearch;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px;">❌ لا توجد مؤشرات تطابق البحث</div>';
+            return;
+        }
+
+        grid.innerHTML = filtered.map(item => `
+            <div class="card" data-category="${item.category}">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <h3>📌 ${item.code} — ${item.title}</h3>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="card-body">
+                    <div class="section">
+                        <div class="section-title">📚 الشواهد الدالة</div>
+                        <ul class="evidence-list">
+                            ${item.evidence.map(ev => `<li>${ev}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="section">
+                        <div class="section-title">🎯 الأثر المتوقع</div>
+                        <div class="impact-text">${item.impact}</div>
+                    </div>
+                    <div class="section">
+                        <div class="section-title">📊 قياس الأثر</div>
+                        <div class="impact-text">${item.measurement}</div>
+                    </div>
+                    <div class="empty-field">
+                        <label>✏️ إجابات مدير المدرسة (تعبأ أثناء المقابلة)</label>
+                        <textarea rows="3" placeholder="سجل هنا ما ذكره مدير المدرسة حول هذا المؤشر ..."></textarea>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    window.toggleCard = function(header) {
+        const body = header.nextElementSibling;
+        body.classList.toggle('open');
+        const icon = header.querySelector('.toggle-icon');
+        if (body.classList.contains('open')) {
+            icon.innerHTML = '▲';
+        } else {
+            icon.innerHTML = '▼';
+        }
+    };
+
+    // فلترة
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.getAttribute('data-filter');
+            renderCards();
+        });
+    });
+
+    // بحث
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', (e) => {
+        searchTerm = e.target.value;
+        renderCards();
+    });
+
+    // فتح جميع البطاقات عند الطباعة (لضمان ظهورها كاملة)
+    window.beforePrint = () => {
+        document.querySelectorAll('.card-body').forEach(body => body.classList.add('open'));
+        document.querySelectorAll('.toggle-icon').forEach(icon => icon.innerHTML = '▲');
+    };
+    window.afterPrint = () => {
+        // نعيد الوضع الافتراضي فقط إذا لم نكن نريد حفظ الفتح - اختياري
+    };
+    if (window.matchMedia) {
+        const media = window.matchMedia('print');
+        media.addListener((mql) => {
+            if (mql.matches) {
+                document.querySelectorAll('.card-body').forEach(body => body.classList.add('open'));
+                document.querySelectorAll('.toggle-icon').forEach(icon => icon.innerHTML = '▲');
+            } else {
+                // يمكن تركه كما هو
+            }
+        });
+    }
+
+    renderCards();
+</script>
+</body>
+</html>
