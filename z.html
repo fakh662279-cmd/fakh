@@ -354,6 +354,7 @@
         <p>المؤشرات · الشواهد · الأثر · قياس الأثر + تسجيل رأي المدير + إرفاق الملفات</p>
         <div class="prepared-by">
             <span>🖊️ إعداد: <strong>خالد البدراني</strong> - منسق التميز</span>
+            <span>📅 التاريخ: <span id="currentDate"></span></span>
         </div>
     </div>
 
@@ -380,6 +381,9 @@
 </div>
 
 <script>
+    // التاريخ الحالي
+    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('ar-SA');
+
     // جميع المؤشرات المستخرجة من ملف المقابلة (9 مؤشرات)
     const indicatorsData = [
         {
@@ -516,6 +520,18 @@
     const grid = document.getElementById('indicatorsGrid');
     let currentFilter = 'all';
     let searchTerm = '';
+
+    // تحميل البيانات المخزنة محليًا
+    function loadStoredData() {
+        for (let i = 0; i < indicatorsData.length; i++) {
+            const storedOpinion = localStorage.getItem(`opinion_${indicatorsData[i].id}`);
+            const storedFiles = localStorage.getItem(`files_${indicatorsData[i].id}`);
+            if (storedOpinion) {
+                const textarea = document.querySelector(`#opinion_${indicatorsData[i].id}`);
+                if (textarea) textarea.value = storedOpinion;
+            }
+        }
+    }
 
     // حفظ رأي المدير في localStorage
     window.saveOpinion = function(id) {
