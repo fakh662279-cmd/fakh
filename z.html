@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بطاقة مقابلة مدير المدرسة - تفاعلية</title>
+    <title>بطاقة مقابلة الإدارة المدرسية - تفاعلية</title>
     <style>
         * {
             margin: 0;
@@ -41,6 +41,18 @@
         .header p {
             opacity: 0.9;
             font-size: 0.95rem;
+        }
+
+        .prepared-by {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         /* شريط الأدوات */
@@ -105,14 +117,19 @@
             background: #cbd5e1;
         }
 
-        .print-btn {
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
             background: #1e4620;
             color: white;
             border: none;
-            padding: 10px 24px;
+            padding: 10px 20px;
             border-radius: 40px;
             font-family: inherit;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             cursor: pointer;
             display: flex;
@@ -121,7 +138,7 @@
             transition: all 0.2s;
         }
 
-        .print-btn:hover {
+        .action-btn:hover {
             background: #0f3311;
             transform: scale(1.02);
         }
@@ -129,7 +146,7 @@
         /* شبكة البطاقات */
         .indicators-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
             gap: 25px;
         }
 
@@ -214,20 +231,23 @@
             margin-right: 20px;
         }
 
-        .empty-field {
+        /* حقول الإدخال */
+        .input-field {
             background: #f8fafc;
-            border: 1px dashed #94a3b8;
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 15px;
+            margin-top: 15px;
         }
 
-        .empty-field label {
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: #475569;
-            display: block;
-            margin-bottom: 6px;
+        .input-field label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #1e4620;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
         }
 
         textarea {
@@ -246,6 +266,37 @@
             border-color: #2e7d32;
         }
 
+        .file-upload {
+            margin-top: 12px;
+        }
+
+        .file-upload input {
+            display: block;
+            width: 100%;
+            padding: 8px 0;
+            font-size: 0.8rem;
+        }
+
+        .uploaded-file {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .remove-file {
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
         .badge {
             display: inline-block;
             background: #e2e8f0;
@@ -256,19 +307,26 @@
             margin-bottom: 8px;
         }
 
+        /* حالة الملفات المرفوعة */
+        .file-status {
+            font-size: 0.75rem;
+            color: #475569;
+            margin-top: 5px;
+        }
+
         @media print {
             body {
                 background: white;
                 padding: 0;
                 margin: 0;
             }
-            .toolbar, .filter-buttons, .search-box, .print-btn, .toggle-icon, .card-header {
+            .toolbar, .filter-buttons, .search-box, .action-btn, .toggle-icon, .card-header {
                 cursor: default;
             }
             .card-body {
                 display: block !important;
             }
-            .filter-btn, .search-box input, .print-btn {
+            .filter-btn, .search-box input, .action-btn {
                 display: none;
             }
             .toolbar {
@@ -283,14 +341,20 @@
                 border: 1px solid #aaa;
                 background: #fefefe;
             }
+            .file-upload input {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h1>📋 بطاقة مقابلة مدير المدرسة</h1>
-        <p>المؤشرات · الشواهد · الأثر · قياس الأثر + تسجيل إجابات المقابلة</p>
+        <h1>📋 بطاقة مقابلة الإدارة المدرسية</h1>
+        <p>المؤشرات · الشواهد · الأثر · قياس الأثر + تسجيل رأي المدير + إرفاق الملفات</p>
+        <div class="prepared-by">
+            <span>🖊️ إعداد: <strong>خالد البدراني</strong> - منسق التميز</span>
+        </div>
     </div>
 
     <div class="toolbar">
@@ -305,7 +369,11 @@
             <button class="filter-btn" data-filter="التطوير المؤسسي">التطوير المؤسسي</button>
             <button class="filter-btn" data-filter="بناء خبرات التعلم">التعلم الإلكتروني</button>
         </div>
-        <button class="print-btn" onclick="window.print();">🖨️ طباعة الصفحة</button>
+        <div class="action-buttons">
+            <button class="action-btn" onclick="openAllCards()">📂 فتح الكل</button>
+            <button class="action-btn" onclick="closeAllCards()">📁 غلق الكل</button>
+            <button class="action-btn" onclick="window.print();">🖨️ طباعة</button>
+        </div>
     </div>
 
     <div class="indicators-grid" id="indicatorsGrid"></div>
@@ -320,10 +388,10 @@
             title: "تضع المدرسة خطة تشغيلية مكتملة العناصر، وفق أهداف تطويرية محددة.",
             category: "التخطيط",
             evidence: [
-                "✅ خطة تشغيلية مكتملة العناصر (رؤية، رسالة، أهداف تطويرية، مبادرات، مؤشرات أداء، ميزانية زمنية).",
-                "✅ الخطة تتضمن مبادرات نوعية مرتبطة بأهداف تطويرية طموحة.",
-                "✅ وجود خطط للاستدامة والتحسين ضمن الخطة.",
-                "✅ مشاركة 90% أو أكثر من منسوبي المدرسة في إعداد الخطة."
+                "خطة تشغيلية مكتملة العناصر (رؤية، رسالة، أهداف تطويرية، مبادرات، مؤشرات أداء، ميزانية زمنية).",
+                "الخطة تتضمن مبادرات نوعية مرتبطة بأهداف تطويرية طموحة.",
+                "وجود خطط للاستدامة والتحسين ضمن الخطة.",
+                "مشاركة 90% أو أكثر من منسوبي المدرسة في إعداد الخطة."
             ],
             impact: "وضوح الاتجاه الاستراتيجي لدى جميع العاملين في المدرسة، وتحقيق التكامل بين الجهود نحو أهداف تطويرية محددة.",
             measurement: "نسبة تحقيق الأهداف التطويرية المحددة في الخطة بنهاية العام الدراسي. نسبة إنجاز المبادرات النوعية وفق الجدول الزمني."
@@ -334,10 +402,10 @@
             title: "تتابع المدرسة تنفيذ خطتها وتطورها بما يضمن تحقيق أهدافها.",
             category: "التخطيط",
             evidence: [
-                "✅ إجراءات محددة لمتابعة الخطة (تقارير دورية، اجتماعات متابعة، لوحات مؤشرات أداء).",
-                "✅ جداول زمنية واضحة لتنفيذ الأنشطة والبرامج مع سجلات متابعة.",
-                "✅ أساليب متنوعة لتقويم الخطة (زيارات صفية، تحليل بيانات، استبيانات).",
-                "✅ تطوير الخطة التشغيلية بناءً على نتائج التقويم."
+                "إجراءات محددة لمتابعة الخطة (تقارير دورية، اجتماعات متابعة، لوحات مؤشرات أداء).",
+                "جداول زمنية واضحة لتنفيذ الأنشطة والبرامج مع سجلات متابعة.",
+                "أساليب متنوعة لتقويم الخطة (زيارات صفية، تحليل بيانات، استبيانات).",
+                "تطوير الخطة التشغيلية بناءً على نتائج التقويم."
             ],
             impact: "تحسين مستمر في أداء المدرسة، وتصحيح الانحرافات التنفيذية بشكل فوري، مما يؤدي إلى تحقيق الأهداف بكفاءة وفعالية.",
             measurement: "نسبة التقدم في تنفيذ الخطة التشغيلية مقارنة بالخطة الزمنية. عدد التعديلات أو التطويرات التي أدخلت على الخطة بناءً على التقارير الدورية."
@@ -348,10 +416,10 @@
             title: "تلتزم المدرسة بقيم مهنة التعليم وأخلاقياتها.",
             category: "قيادة العملية التعليمية",
             evidence: [
-                "✅ إجراءات واضحة لمتابعة التزام المنسوبين بقواعد السلوك الوظيفي.",
-                "✅ علاقات إيجابية سائدة قائمة على الاحترام المتبادل والثقة.",
-                "✅ 90% أو أكثر من المنسوبين يظهرون توازناً بين العلاقات الإنسانية والواجبات الوظيفية.",
-                "✅ برامج توعوية بقيم وأخلاقيات المهنة."
+                "إجراءات واضحة لمتابعة التزام المنسوبين بقواعد السلوك الوظيفي.",
+                "علاقات إيجابية سائدة قائمة على الاحترام المتبادل والثقة.",
+                "90% أو أكثر من المنسوبين يظهرون توازناً بين العلاقات الإنسانية والواجبات الوظيفية.",
+                "برامج توعوية بقيم وأخلاقيات المهنة."
             ],
             impact: "بيئة مدرسية آمنة، محفزة، قائمة على الاحترام والانضباط الذاتي، تنعكس إيجاباً على سلوك المتعلمين وأدائهم.",
             measurement: "انخفاض عدد شكاوى قلة الاحترام أو المخالفات السلوكية. نتائج استبيان المناخ المدرسي. نسبة التزام المعلمين بالدوام."
@@ -362,10 +430,10 @@
             title: "تعزز المدرسة الشراكة المجتمعية لدعم التعلم والتأثير الإيجابي في المجتمع المحلي.",
             category: "المجتمع المدرسي",
             evidence: [
-                "✅ شراكات فاعلة مع مؤسسات وطنية (اتفاقيات، خطط تعاون، أنشطة مشتركة).",
-                "✅ استثمار الشراكة المجتمعية لدعم تعلم المتعلمين واحتياجات ذوي الإعاقة والموهوبين.",
-                "✅ فعاليات وأنشطة توعوية مبتكرة للمجتمع المحلي.",
-                "✅ إتاحة إمكانات المدرسة (مسرح، ملاعب، قاعات) لخدمة المجتمع."
+                "شراكات فاعلة مع مؤسسات وطنية (اتفاقيات، خطط تعاون، أنشطة مشتركة).",
+                "استثمار الشراكة المجتمعية لدعم تعلم المتعلمين واحتياجات ذوي الإعاقة والموهوبين.",
+                "فعاليات وأنشطة توعوية مبتكرة للمجتمع المحلي.",
+                "إتاحة إمكانات المدرسة (مسرح، ملاعب، قاعات) لخدمة المجتمع."
             ],
             impact: "تحسن نواتج التعلم ودعم فئات المتعلمين المختلفة من خلال الموارد المجتمعية، وتعزيز دور المدرسة كمركز مؤثر في تنمية المجتمع.",
             measurement: "عدد الشراكات النشطة والفعالة. قياس أثر الأنشطة المجتمعية عبر استبيانات رضا أفراد المجتمع. تطور أداء المتعلمين المستهدفين."
@@ -376,11 +444,11 @@
             title: "توفر المدرسة كادراً تعليمياً مكتملاً ومؤهلاً.",
             category: "التطوير المؤسسي",
             evidence: [
-                "✅ معايير واضحة لاختيار الكوادر التعليمية ومعرفة الوظائف الشاغرة والمهارات المطلوبة.",
-                "✅ نشر إعلانات الوظائف على منصات مناسبة.",
-                "✅ طرق تقييم متنوعة للمتقدمين (مقابلات، اختبارات تدريس).",
-                "✅ اكتمال الكادر التعليمي بنسبة 90% وأعلى وتوافق تخصصاتهم مع مؤهلاتهم بنسبة 90%.",
-                "✅ برامج تدريب ودعم للمعلمين الجدد."
+                "معايير واضحة لاختيار الكوادر التعليمية ومعرفة الوظائف الشاغرة والمهارات المطلوبة.",
+                "نشر إعلانات الوظائف على منصات مناسبة.",
+                "طرق تقييم متنوعة للمتقدمين (مقابلات، اختبارات تدريس).",
+                "اكتمال الكادر التعليمي بنسبة 90% وأعلى وتوافق تخصصاتهم مع مؤهلاتهم بنسبة 90%.",
+                "برامج تدريب ودعم للمعلمين الجدد."
             ],
             impact: "استقرار تعليمي، وتقليل الفجوات بين التخصص والمؤهل، مما ينعكس إيجاباً على جودة التدريس ونواتج التعلم.",
             measurement: "نسبة الشواغر الوظيفية المملوءة بكادر مؤهل. تقييم أداء المعلمين الجدد بعد فترة التدريب."
@@ -391,10 +459,10 @@
             title: "توفر المدرسة كادراً إدارياً مكتملاً ومؤهلاً.",
             category: "التطوير المؤسسي",
             evidence: [
-                "✅ اكتمال الكادر الإداري بنسبة 90% وأعلى.",
-                "✅ 90% من الكادر الإداري يحمل مؤهلاً مناسباً (ثانوية فأعلى مع استثناءات للتخصصات).",
-                "✅ توافق مؤهل وخبرة الكادر الإداري مع المهام المكلف بها.",
-                "✅ إجراءات واضحة في الاستقطاب (معايير، إعلان، مقابلات)."
+                "اكتمال الكادر الإداري بنسبة 90% وأعلى.",
+                "90% من الكادر الإداري يحمل مؤهلاً مناسباً (ثانوية فأعلى مع استثناءات للتخصصات).",
+                "توافق مؤهل وخبرة الكادر الإداري مع المهام المكلف بها.",
+                "إجراءات واضحة في الاستقطاب (معايير، إعلان، مقابلات)."
             ],
             impact: "سير العمل الإداري بسلاسة وكفاءة، وتوفير بيئة داعمة ومساندة للعملية التعليمية.",
             measurement: "نسبة اكتمال الهيكل الإداري الفعلي مقابل المعتمد. إنجاز المهام الإدارية في الوقت المحدد. درجة رضا المعلمين عن الدعم الإداري."
@@ -405,11 +473,11 @@
             title: "تظهر المدرسة ثباتاً واستدامة مالية.",
             category: "التطوير المؤسسي",
             evidence: [
-                "✅ موارد مالية كافية لدعم وتحسين الجودة التعليمية المستمرة.",
-                "✅ القدرة على تغطية الالتزامات المالية.",
-                "✅ توزيع الميزانية بناءً على الأولويات والاحتياجات.",
-                "✅ نشر سياسة الرسوم والتحصيل لأولياء الأمور.",
-                "✅ إجراءات واضحة لتحقيق الاستدامة المالية."
+                "موارد مالية كافية لدعم وتحسين الجودة التعليمية المستمرة.",
+                "القدرة على تغطية الالتزامات المالية.",
+                "توزيع الميزانية بناءً على الأولويات والاحتياجات.",
+                "نشر سياسة الرسوم والتحصيل لأولياء الأمور.",
+                "إجراءات واضحة لتحقيق الاستدامة المالية."
             ],
             impact: "استمرارية البرامج التعليمية والتحسينية دون توقف، وبناء ثقة أولياء الأمور في شفافية الإدارة المالية.",
             measurement: "نسبة تغطية المصروفات مقابل الإيرادات السنوية. وجود فائض مالي معاد استثماره في التطوير. نسبة التزام أولياء الأمور بسداد الرسوم."
@@ -420,10 +488,10 @@
             title: "تنفذ المدرسة خطة للتحسين بناءً على نتائج التقويم المدرسي، وتتابعها.",
             category: "التطوير المؤسسي",
             evidence: [
-                "✅ خطة تحسين تركز على أولويات منبثقة من التقويم الذاتي للمدرسة.",
-                "✅ تنفيذ برامج وأنشطة خطة التحسين.",
-                "✅ متابعة منتظمة لتنفيذ خطة التحسين (تقارير، اجتماعات).",
-                "✅ تطوير الخطة وإجراءاتها بشكل دوري."
+                "خطة تحسين تركز على أولويات منبثقة من التقويم الذاتي للمدرسة.",
+                "تنفيذ برامج وأنشطة خطة التحسين.",
+                "متابعة منتظمة لتنفيذ خطة التحسين (تقارير، اجتماعات).",
+                "تطوير الخطة وإجراءاتها بشكل دوري."
             ],
             impact: "معالجة منهجية لنقاط الضعف، وتعزيز نقاط القوة، بما يحقق قفزات نوعية في نواتج التعلم.",
             measurement: "نسبة إنجاز خطة التحسين بحلول الفترة المحددة. تحسن مؤشرات التقويم الذاتي في العام التالي. التقدم المحرز في نواتج التعلم."
@@ -434,11 +502,11 @@
             title: "تفعل المدرسة التعلم الإلكتروني لتلبية احتياجات المتعلمين، ودعم تعلمهم.",
             category: "بناء خبرات التعلم",
             evidence: [
-                "✅ إجراءات محددة لدمج التعلم الإلكتروني في التعليم اليومي.",
-                "✅ إجراءات للطوارئ (التعليم عن بعد).",
-                "✅ أنشطة متنوعة ومبتكرة تدمج التعلم الصفي والتعلم الإلكتروني.",
-                "✅ تجهيزات تقنية كافية لتلبية احتياجات جميع المتعلمين.",
-                "✅ متابعة وتطوير تنفيذ برامج دمج التعلم الإلكتروني."
+                "إجراءات محددة لدمج التعلم الإلكتروني في التعليم اليومي.",
+                "إجراءات للطوارئ (التعليم عن بعد).",
+                "أنشطة متنوعة ومبتكرة تدمج التعلم الصفي والتعلم الإلكتروني.",
+                "تجهيزات تقنية كافية لتلبية احتياجات جميع المتعلمين.",
+                "متابعة وتطوير تنفيذ برامج دمج التعلم الإلكتروني."
             ],
             impact: "التعلم المخصص والمرن الذي يتجاوب مع احتياجات وسرعة كل متعلم، ويستمر في أي ظرف طارئ، ويزيد من دافعية المتعلمين.",
             measurement: "نسبة استخدام المعلمين لمنصات التعلم الإلكتروني في خططهم اليومية. مستوى رضا المتعلمين وأولياء الأمور عن تجربة التعلم الإلكتروني."
@@ -448,6 +516,82 @@
     const grid = document.getElementById('indicatorsGrid');
     let currentFilter = 'all';
     let searchTerm = '';
+
+    // حفظ رأي المدير في localStorage
+    window.saveOpinion = function(id) {
+        const textarea = document.querySelector(`#opinion_${id}`);
+        if (textarea) {
+            localStorage.setItem(`opinion_${id}`, textarea.value);
+        }
+    }
+
+    // رفع ملف
+    window.uploadFile = function(id, input) {
+        const file = input.files[0];
+        if (!file) return;
+        
+        const container = document.querySelector(`#file-container-${id}`);
+        const fileId = `${id}_${Date.now()}_${file.name}`;
+        
+        // تخزيف معلومات الملف
+        const fileData = {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: file.lastModified
+        };
+        
+        let storedFiles = localStorage.getItem(`files_${id}`);
+        let filesArray = storedFiles ? JSON.parse(storedFiles) : [];
+        filesArray.push(fileData);
+        localStorage.setItem(`files_${id}`, JSON.stringify(filesArray));
+        
+        // عرض الملف في الواجهة
+        displayFiles(id, filesArray);
+        
+        // مسح قيمة input لرفع ملف جديد
+        input.value = '';
+    }
+    
+    function displayFiles(id, filesArray) {
+        const container = document.querySelector(`#file-container-${id}`);
+        if (!container) return;
+        
+        if (!filesArray || filesArray.length === 0) {
+            container.innerHTML = '<div class="file-status">📁 لا توجد ملفات مرفوعة</div>';
+            return;
+        }
+        
+        container.innerHTML = filesArray.map((file, index) => `
+            <div class="uploaded-file">
+                📎 ${file.name}
+                <button class="remove-file" onclick="removeFile(${id}, ${index})">✖ حذف</button>
+            </div>
+        `).join('');
+    }
+    
+    window.removeFile = function(id, fileIndex) {
+        const storedFiles = localStorage.getItem(`files_${id}`);
+        if (storedFiles) {
+            let filesArray = JSON.parse(storedFiles);
+            filesArray.splice(fileIndex, 1);
+            localStorage.setItem(`files_${id}`, JSON.stringify(filesArray));
+            displayFiles(id, filesArray);
+        }
+    }
+    
+    function loadAllFiles() {
+        for (let i = 0; i < indicatorsData.length; i++) {
+            const id = indicatorsData[i].id;
+            const storedFiles = localStorage.getItem(`files_${id}`);
+            if (storedFiles) {
+                const filesArray = JSON.parse(storedFiles);
+                displayFiles(id, filesArray);
+            } else {
+                displayFiles(id, []);
+            }
+        }
+    }
 
     function renderCards() {
         const filtered = indicatorsData.filter(item => {
@@ -471,7 +615,7 @@
                     <div class="section">
                         <div class="section-title">📚 الشواهد الدالة</div>
                         <ul class="evidence-list">
-                            ${item.evidence.map(ev => `<li>${ev}</li>`).join('')}
+                            ${item.evidence.map(ev => `<li>✅ ${ev}</li>`).join('')}
                         </ul>
                     </div>
                     <div class="section">
@@ -482,13 +626,37 @@
                         <div class="section-title">📊 قياس الأثر</div>
                         <div class="impact-text">${item.measurement}</div>
                     </div>
-                    <div class="empty-field">
-                        <label>✏️ إجابات مدير المدرسة (تعبأ أثناء المقابلة)</label>
-                        <textarea rows="3" placeholder="سجل هنا ما ذكره مدير المدرسة حول هذا المؤشر ..."></textarea>
+                    
+                    <!-- حقل رأي مدير المدرسة -->
+                    <div class="input-field">
+                        <label>💬 رأي مدير المدرسة</label>
+                        <textarea id="opinion_${item.id}" rows="3" placeholder="سجل هنا ما ذكره مدير المدرسة حول هذا المؤشر ..." onblur="saveOpinion(${item.id})"></textarea>
+                    </div>
+                    
+                    <!-- حقل رفع الملفات -->
+                    <div class="input-field">
+                        <label>📎 الملفات المرفقة (دليل، صورة، تقرير، إثبات)</label>
+                        <div class="file-upload">
+                            <input type="file" id="file-input-${item.id}" onchange="uploadFile(${item.id}, this)">
+                            <div id="file-container-${item.id}" class="uploaded-file"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         `).join('');
+        
+        // تحميل البيانات المخزنة بعد إنشاء العناصر
+        setTimeout(() => {
+            for (let i = 0; i < indicatorsData.length; i++) {
+                const id = indicatorsData[i].id;
+                const storedOpinion = localStorage.getItem(`opinion_${id}`);
+                if (storedOpinion) {
+                    const textarea = document.querySelector(`#opinion_${id}`);
+                    if (textarea) textarea.value = storedOpinion;
+                }
+            }
+            loadAllFiles();
+        }, 100);
     }
 
     window.toggleCard = function(header) {
@@ -501,6 +669,16 @@
             icon.innerHTML = '▼';
         }
     };
+
+    window.openAllCards = function() {
+        document.querySelectorAll('.card-body').forEach(body => body.classList.add('open'));
+        document.querySelectorAll('.toggle-icon').forEach(icon => icon.innerHTML = '▲');
+    }
+
+    window.closeAllCards = function() {
+        document.querySelectorAll('.card-body').forEach(body => body.classList.remove('open'));
+        document.querySelectorAll('.toggle-icon').forEach(icon => icon.innerHTML = '▼');
+    }
 
     // فلترة
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -519,22 +697,18 @@
         renderCards();
     });
 
-    // فتح جميع البطاقات عند الطباعة (لضمان ظهورها كاملة)
+    // فتح جميع البطاقات عند الطباعة
     window.beforePrint = () => {
         document.querySelectorAll('.card-body').forEach(body => body.classList.add('open'));
         document.querySelectorAll('.toggle-icon').forEach(icon => icon.innerHTML = '▲');
     };
-    window.afterPrint = () => {
-        // نعيد الوضع الافتراضي فقط إذا لم نكن نريد حفظ الفتح - اختياري
-    };
+    
     if (window.matchMedia) {
         const media = window.matchMedia('print');
         media.addListener((mql) => {
             if (mql.matches) {
                 document.querySelectorAll('.card-body').forEach(body => body.classList.add('open'));
                 document.querySelectorAll('.toggle-icon').forEach(icon => icon.innerHTML = '▲');
-            } else {
-                // يمكن تركه كما هو
             }
         });
     }
